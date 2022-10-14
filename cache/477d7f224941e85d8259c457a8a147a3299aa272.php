@@ -27,7 +27,7 @@
             </div>
         </div>
 
-        <div class="row no-gutters">
+        <div class="row no-gutters table-row">
             <table class="table table-bordered">
                 <tr>
                     <th class="py-4">TITLE</th>
@@ -47,10 +47,10 @@
                         <td><?php echo e($book->year_published); ?></td>
                         <td><?php echo e($book->category); ?></td>
                         <td class="text-center">
-                            <button class="edit-button btn btn-secondary">
+                            <button class="edit-button btn btn-secondary" value="<?php echo e($book->id); ?>">
                                 EDIT
                             </button>
-                            <button class="delete-button btn btn-secondary">
+                            <button class="delete-button btn btn-secondary" value="<?php echo e($book->id); ?>">
                                 DELETE
                             </button>
                         </td>
@@ -61,30 +61,31 @@
     </div>
 
 
-    <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="addModal" aria-hidden="true">
+    <div class="modal fade" id="formModal" tabindex="-1" role="dialog" aria-labelledby="formModal" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Add Book</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Add/Edit Book</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
 
-                <form action="create" id="createForm" method="post">
+                <form action="create" id="form" method="post">
                     <div class="modal-body">
-                        <div class="form-group"><label for="title">Title</label><input name="title" type="text"
-                                class="form-control"></div>
-                        <div class="form-group"><label for="isbn">ISBN</label><input name="isbn" type="text"
-                                class="form-control"></div>
-                        <div class="form-group"><label for="author">Author</label><input name="author" type="text"
-                                class="form-control"></div>
-                        <div class="form-group"><label for="publisher">Publisher</label><input name="publisher"
+                        <input type="hidden" id="id" name="id">
+                        <div class="form-group"><label for="title">Title</label><input id="title" name="title"
                                 type="text" class="form-control"></div>
+                        <div class="form-group"><label for="isbn">ISBN</label><input id="isbn" name="isbn"
+                                type="text" class="form-control"></div>
+                        <div class="form-group"><label for="author">Author</label><input id="author"name="author"
+                                type="text" class="form-control"></div>
+                        <div class="form-group"><label for="publisher">Publisher</label><input id="publisher"
+                                name="publisher" type="text" class="form-control"></div>
                         <div class="form-group"><label for="year_published">Year Published</label><input
-                                name="year_published" type="number" class="form-control"></div>
+                                id="year_published" name="year_published" type="number" class="form-control"></div>
                         <div class="form-group"><label for="category">Category</label><input type="text"
-                                name="category" class="form-control"></div>
+                                id='category' name="category" class="form-control"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -98,26 +99,77 @@
     <script>
         jQuery(document).ready(function() {
             $('.add-button').on('click', function() {
-                $('#addModal').modal({
+                $('#id').val('');
+                $('#title').val('');
+                $('#isbn').val('');
+                $('#author').val('');
+                $('#publisher').val('');
+                $('#year_published').val('');
+                $('#category').val('');
+
+                $('#formModal').modal({
                     keyboard: false
                 });
             });
 
-            $('#createForm').on('submit', function(e) {
+            $('body').on('click', '.delete-button', function () {
+                $.get({
+                    url: 'delete/' + $(this).val(),
+                    success: function (data) {
+                        location.reload();
+                    }
+                })
+            })
+
+            $('body').on('click', '.edit-button', function() {
+                $.get({
+                    url: 'view/' + $(this).val(),
+                    dataType: 'json',
+                    success: function(data) {
+                        $('#id').val(data.book.id);
+                        $('#title').val(data.book.title);
+                        $('#isbn').val(data.book.isbn);
+                        $('#author').val(data.book.author);
+                        $('#publisher').val(data.book.publisher);
+                        $('#year_published').val(data.book.year_published);
+                        $('#category').val(data.book.category);
+                    }
+                });
+                $('#formModal').modal({
+                    keyboard: false
+                });
+            })
+
+            $('#form').on('submit', function(e) {
                 e.preventDefault();
                 const form = $(e.target);
                 const json = convertFormToJSON(form);
+
+                if (json.id != '') {
+                    $.post({
+                        url: 'update',
+                        dataType: 'json',
+                        data: json,
+                        success: function(data) {
+                            if (data.status == 'OK') {
+                                location.reload();
+                            }
+                        }
+                    });
+
+                    return;
+                }
 
                 $.post({
                     url: 'create',
                     dataType: 'json',
                     data: json,
-                    success: function (data) {
+                    success: function(data) {
                         if (data.status == 'OK') {
-
+                            location.reload();
                         }
                     }
-                })
+                });
             });
 
             function convertFormToJSON(form) {

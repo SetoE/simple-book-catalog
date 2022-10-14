@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b8bbc7379f1aea5571094d2a869205eb",
+    "content-hash": "ed859598e438e87d715f66bb3799cd76",
     "packages": [
         {
             "name": "monolog/monolog",
@@ -130,6 +130,41 @@
                 "psr-3"
             ],
             "time": "2021-05-03T11:20:27+00:00"
+        },
+        {
+            "name": "tiagopaes/php-dao",
+            "version": "2.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/tiagopaes/php-dao.git",
+                "reference": "17b7a2b9f1895279ef9846a71b8e04c4eeebf784"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/tiagopaes/php-dao/zipball/17b7a2b9f1895279ef9846a71b8e04c4eeebf784",
+                "reference": "17b7a2b9f1895279ef9846a71b8e04c4eeebf784",
+                "shasum": ""
+            },
+            "require-dev": {
+                "php": ">=5.4"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "PhpDao\\": [
+                        "src/"
+                    ]
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Tiago Paes",
+                    "email": "tiagopaes37@gmail.com"
+                }
+            ],
+            "description": "A simple library to handle Data Access Objects.",
+            "time": "2018-01-16T20:47:54+00:00"
         }
     ],
     "packages-dev": [],

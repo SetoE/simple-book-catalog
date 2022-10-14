@@ -1,20 +1,18 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
 
+use App\Controller\Book;
 use App\Lib\App;
 use App\Lib\Router;
 use App\Lib\Request;
 use App\Lib\Response;
 
 Router::get('/', function () {
-    echo 'This is the Home Page';
+    (new Book())->indexAction();
 });
 
-Router::get('/book/([0-9]*)', function (Request $req, Response $res) {
-    $res->toJSON([
-        'book' =>  ['id' => $req->params[0]],
-        'status' => 'ok'
-    ]);
-});
+Router::get('/view/([0-9]*)', (function (Request $req, Response $res) {
+    (new Book())->viewAction($req, $res);
+}));
 
 App::run();

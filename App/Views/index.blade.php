@@ -8,9 +8,6 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
         integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous">
-    </script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous">
     </script>
@@ -30,7 +27,7 @@
             </div>
         </div>
 
-        <div class="row no-gutters">
+        <div class="row no-gutters table-row">
             <table class="table table-bordered">
                 <tr>
                     <th class="py-4">TITLE</th>
@@ -39,6 +36,7 @@
                     <th class="py-4">PUBLISHER</th>
                     <th class="py-4">YEAR PUBLISHED</th>
                     <th class="py-4">CATEGORY</th>
+                    <th></th>
                 </tr>
                 @foreach ($books as $book)
                     <tr>
@@ -48,6 +46,14 @@
                         <td>{{ $book->publisher }}</td>
                         <td>{{ $book->year_published }}</td>
                         <td>{{ $book->category }}</td>
+                        <td class="text-center">
+                            <button class="edit-button btn btn-secondary">
+                                EDIT
+                            </button>
+                            <button class="delete-button btn btn-secondary">
+                                DELETE
+                            </button>
+                        </td>
                     </tr>
                 @endforeach
             </table>
@@ -65,7 +71,7 @@
                     </button>
                 </div>
 
-                <form action="create" method="post">
+                <form action="create" id="createForm" method="post">
                     <div class="modal-body">
                         <div class="form-group"><label for="title">Title</label><input name="title" type="text"
                                 class="form-control"></div>
@@ -96,6 +102,33 @@
                     keyboard: false
                 });
             });
+
+            $('#createForm').on('submit', function(e) {
+                e.preventDefault();
+                const form = $(e.target);
+                const json = convertFormToJSON(form);
+
+                $.post({
+                    url: 'create',
+                    dataType: 'json',
+                    data: json,
+                    success: function(data) {
+                        if (data.status == 'OK') {
+                            location.reload();
+                        }
+                    }
+                })
+            });
+
+            function convertFormToJSON(form) {
+                const array = $(form)
+                    .serializeArray(); // Encodes the set of form elements as an array of names and values.
+                const json = {};
+                $.each(array, function() {
+                    json[this.name] = this.value || "";
+                });
+                return json;
+            }
 
 
         });

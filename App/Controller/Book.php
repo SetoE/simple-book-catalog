@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Lib\Request;
+use App\Lib\Response;
 use App\Model\Book as ModelBook;
 use Exception;
 
@@ -16,9 +18,28 @@ class Book extends Controller
         ]);
     }
 
-    public function createAction($req, $res)
+    public function createAction(Request $req, Response $res)
     {
-        echo 'This is the create action';
+        $book = new ModelBook();
+        $bookCreated = $book->create($req->getBody());
+
+        if ($bookCreated) {
+            $res->toJSON([
+                'book' => [
+                    'id' => $bookCreated->id,
+                    'title' => $bookCreated->title,
+                    'isbn' => $bookCreated->isbn,
+                    'author' => $bookCreated->author,
+                    'publisher' => $bookCreated->publisher,
+                    'year_published' => $bookCreated->year_published,
+                    'category' => $bookCreated->category,
+                    'created_at' => $bookCreated->created_at,
+                    'edited_at' => $bookCreated->edited_at,
+                    'status' => $bookCreated->status,
+                ],
+                'status' => 'OK'
+            ]);
+        }
     }
 
     public function editAction($req, $res)
